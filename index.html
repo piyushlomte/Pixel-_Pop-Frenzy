@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Pop Frenzy</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Front Page -->
+    <div class="front-page" id="frontPage">
+        <div class="front-container">
+            <h1>Pixel Pop Frenzy</h1>
+            <div class="input-section">
+                <div class="input-group">
+                    <label for="userName">Enter Your Name:</label>
+                    <input type="text" id="userName" placeholder="Your name here...">
+                </div>
+                <div class="input-group">
+                    <label>Connect Your Wallet:</label>
+                    <input type="text" id="walletAddressInput" placeholder="Enter your wallet address..." class="wallet-input">
+                    <button id="connectWallet" class="wallet-button">Connect Wallet</button>
+                    <div id="walletStatus" class="wallet-status">Not Connected</div>
+                    <div id="walletAddress" class="wallet-address" style="display: none;">
+                        <span>Connected Address:</span>
+                        <span id="addressDisplay"></span>
+                    </div>
+                </div>
+            </div>
+            <button id="startGame" class="next-button" disabled>Start Game</button>
+        </div>
+    </div>
+
+    <!-- Game Container (hidden initially) -->
+    <div class="game-container" id="gameContainer" style="display: none;">
+        <div class="game-header">
+            <div class="wallet-controls">
+                <div id="walletStatus" class="wallet-status">Not Connected</div>
+                <button id="disconnectWallet" style="display: none;">Disconnect</button>
+            </div>
+        </div>
+        <div class="header">
+            <h1>Pixel Pop Frenzy</h1>
+            <div class="player-info">
+                <span id="displayName"></span>
+                <div class="wallet-info">
+                    <span class="wallet-label">Coins:</span>
+                    <span id="walletBalance">0</span>
+                </div>
+                <div class="connection-status">
+                    <span id="connectionStatus">Connecting...</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-container">
+            <div class="score-container">
+                <span>Score:</span>
+                <span id="score">0</span>
+            </div>
+            <div class="combo-container">
+                <span>Combo:</span>
+                <span id="combo">x1</span>
+            </div>
+            <div class="time-container">
+                <span>Time:</span>
+                <span id="time">60</span>
+            </div>
+        </div>
+
+        <div class="rule-display-container">
+            <p id="currentRule">Tap the shapes!</p>
+        </div>
+        
+        <div class="game-area">
+            <canvas id="gameCanvas"></canvas>
+            <div class="game-over">
+                <h2>Game Over!</h2>
+                <p>Final Score: <span id="finalScore">0</span></p>
+                <p>Highest Combo: <span id="finalCombo">x1</span></p>
+                <p>Coins Earned: <span id="coinsEarned">0</span></p>
+                <button id="restartButton">Play Again</button>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button id="startButton">Start Game</button>
+        </div>
+        
+        <div id="playerStats" class="player-stats">
+            <p>Player: Piyush</p>
+            <p>High Score: 0</p>
+            <p>Total Coins: 0</p>
+            <p>Games Played: 0</p>
+        </div>
+        
+        <div class="multiplayer-info">
+            <h2>Players Online</h2>
+            <div class="players-list"></div>
+        </div>
+        
+        <div class="leaderboard">
+            <h2>Leaderboard</h2>
+            <div class="leaderboard-list"></div>
+        </div>
+        
+        <div class="shop">
+            <h2>Shop</h2>
+            <div class="shop-items">
+                <div class="shop-item" data-item="theme1" data-cost="100">
+                    <h3>Neon Theme</h3>
+                    <p>100 coins</p>
+                    <button class="buy-button">Buy</button>
+                </div>
+                <div class="shop-item" data-item="theme2" data-cost="200">
+                    <h3>Retro Theme</h3>
+                    <p>200 coins</p>
+                    <button class="buy-button">Buy</button>
+                </div>
+                <div class="shop-item" data-item="powerup1" data-cost="50">
+                    <h3>Time Boost</h3>
+                    <p>+10 seconds</p>
+                    <p>50 coins</p>
+                    <button class="buy-button">Buy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .wallet-controls {
+            display: none; /* Hidden by default */
+            gap: 10px;
+            align-items: center;
+        }
+
+        .player-stats {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            color: #00ffff;
+            text-align: center;
+        }
+
+        .player-stats p {
+            margin: 10px 0;
+            font-size: 1.1rem;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+
+        #disconnectWallet {
+            padding: 8px 16px;
+            border-radius: 5px;
+            border: none;
+            background: #f44336;
+            color: white;
+            cursor: pointer;
+        }
+
+        #disconnectWallet:hover {
+            background: #d32f2f;
+        }
+
+        .wallet-status {
+            color: #ff4444;
+            font-size: 14px;
+        }
+
+        .wallet-status.connected {
+            color: #00ff00;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .time-container {
+            background: rgba(255, 0, 0, 0.2);
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 1.8rem;
+            border: 2px solid rgba(255, 0, 0, 0.3);
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .time-container span:first-child {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: #ff4444;
+        }
+
+        .time-container span:last-child {
+            color: #ff0000;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+
+        .score-container, .combo-container {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .rule-display-container {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+        }
+
+        #currentRule {
+            font-size: 1.5rem;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            margin: 0;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        .game-area {
+            position: relative;
+            background: #111;
+            border-radius: 15px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+
+        .front-container h1 {
+            font-size: 3.5rem;
+            margin-bottom: 2rem;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+            font-family: 'Arial Black', sans-serif;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .front-container h1::before {
+            content: '🎮';
+            position: absolute;
+            left: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+        }
+
+        .front-container h1::after {
+            content: '🎮';
+            position: absolute;
+            right: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px rgba(0, 255, 255, 0.5),
+                           0 0 20px rgba(0, 255, 255, 0.5),
+                           0 0 30px rgba(0, 255, 255, 0.5);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(0, 255, 255, 0.8),
+                           0 0 30px rgba(0, 255, 255, 0.8),
+                           0 0 40px rgba(0, 255, 255, 0.8);
+            }
+        }
+
+        .leaderboard {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid rgba(0, 255, 255, 0.3);
+        }
+    </style>
+
+    <script src="game.js"></script>
+</body>
+</html> 
